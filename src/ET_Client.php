@@ -113,6 +113,7 @@ class ET_Client extends SoapClient
 			$this->clientSecret = $config['clientsecret'];
 			$this->appsignature = $config['appsignature'];
 			$this->baseAuthUrl = $config["baseAuthUrl"];
+			$this->tenantTokens = [];
 			if (array_key_exists('baseSoapUrl', $config)) {
 				if (!empty($config["baseSoapUrl"])) {
 					$this->baseSoapUrl = $config["baseSoapUrl"];
@@ -611,12 +612,13 @@ class ET_Client extends SoapClient
 	public function getAuthToken($tenantKey = null) 
 	{
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
+		if(!$this->tenantTokens) {
+			return null;
+		}
 		if ($this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}		
-		return isset($this->tenantTokens[$tenantKey]['authToken']) 
-			? $this->tenantTokens[$tenantKey]['authToken']
-			: null;
+		return $this->tenantTokens[$tenantKey]['authToken'] ?? null;
 	}
 	
 	/** 
@@ -627,6 +629,9 @@ class ET_Client extends SoapClient
 	*/
 	function setAuthToken($tenantKey, $authToken, $authTokenExpiration) 
 	{
+		if(!$tenantKey) {
+			return;
+		}
 		if ($this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
@@ -642,12 +647,14 @@ class ET_Client extends SoapClient
 	function getAuthTokenExpiration($tenantKey) 
 	{
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
+		if(!$tenantKey) {
+			return null;
+		}
+		$this->tenantTokens ??= [];
 		if ($this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
-		return isset($this->tenantTokens[$tenantKey]['authTokenExpiration'])
-			? $this->tenantTokens[$tenantKey]['authTokenExpiration']
-			: null;
+		return $this->tenantTokens[$tenantKey]['authTokenExpiration'] ?? null;
 	}
 
 	/** 
@@ -657,7 +664,10 @@ class ET_Client extends SoapClient
 	*/
 	function getInternalAuthToken($tenantKey) 
 	{
-		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;	
+		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
+		if(!$tenantKey) {
+			return null;
+		}
 		if ($this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
@@ -672,6 +682,9 @@ class ET_Client extends SoapClient
 	* @param string $internalAuthToken
 	*/
 	function setInternalAuthToken($tenantKey, $internalAuthToken) {
+		if(!$tenantKey) {
+			return null;
+		}
 		if ($this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}	
@@ -685,6 +698,9 @@ class ET_Client extends SoapClient
 	*/
 	function setRefreshToken($tenantKey, $refreshToken) 
 	{
+		if(!$tenantKey) {
+			return null;
+		}
 		if ($this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}	
@@ -699,13 +715,14 @@ class ET_Client extends SoapClient
 	 */
 	public function getRefreshToken($tenantKey)
 	{
-		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;	
+		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
+		if(!$tenantKey) {
+			return null;
+		}
 		if ($this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
-		return isset($this->tenantTokens[$tenantKey]['refreshToken']) 
-			? $this->tenantTokens[$tenantKey]['refreshToken']
-			: null;
+		return $this->tenantTokens[$tenantKey]['refreshToken'] ?? null;
 	}	
 
 	/**
